@@ -27,6 +27,7 @@ ax = plt.axes(projection='3d')
 X, Y, Z = axes3d.get_test_data(0.05)
 cset = ax.contour(X, Y, Z, 16, extend3d=True)
 ax.clabel(cset, fontsize=9, inline=1)
+plt.title('Ejemplo 1')
 plt.show()
 
 """
@@ -45,11 +46,14 @@ Z = g(X, Y)
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
+plt.title('Ejemplo 2')
 ax.contour3D(X, Y, Z, 10, cmap='binary')
 ax.contour3D(X, Y, -1*Z, 10, cmap='binary')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 ax.set_zlabel('z')
+
+
 
 
 """
@@ -58,7 +62,7 @@ Ejemplo3
 
 fig = plt.figure()
 ax = plt.axes(projection='3d')
-
+plt.title('Ejemplo 3')
 t2 = np.linspace(1, 0, 100)
 x2 = t2 * np.sin(20 * t2)
 y2 = t2 * np.cos(20 * t2)
@@ -100,7 +104,7 @@ ax.plot_surface(x, y, z, rstride=1, cstride=1,
 
 ax.plot(x2, y2, z2, '-b',c="gray",zorder=3)
 #ax.plot_wireframe(x2, y2, z2)
-
+plt.title('Ejemplo Esfera')
 ax.set_title('surface');
 
 
@@ -142,9 +146,11 @@ ax.plot_surface(proj(x,z,z0=z0), proj(y,z,z0=z0), z*0+1, rstride=1, cstride=1,
 #ax.plot(proj(x2,z2,z0=z0), proj(y2,z2,z0=z0), 1, '-b',c="gray",zorder=1)
 ax.scatter(proj(x2,z2,z0=z0), proj(y2,z2,z0=z0), 1, '-b',c=col,zorder= 3,s=0.1)
 ax.set_title('Stereographic projection');
+plt.title('Esfera proyectada')
 
 plt.show()
 fig.savefig('stereo2.png', dpi=250)   # save the figure to file
+
 plt.close(fig) 
 
 
@@ -178,7 +184,7 @@ plt.show()
 #fig.savefig('stereo2.png')   # save the figure to file
 plt.close(fig) 
 
-
+plt.title('Esfera proyectada familia parametrica')
 
 """
 HACEMOS LA ANIMACIÓN
@@ -207,6 +213,7 @@ def init():
     return animate(0),
 
 animate(np.arange(0, 1,0.1)[1])
+plt.title('Animacion')
 plt.show()
 
 
