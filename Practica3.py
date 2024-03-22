@@ -56,8 +56,10 @@ def orb(n, q0, dq0, F, args=None, d=0.001):   # Plantilla
     Returns a ?????????????? object 
 
     Arguments:
-        q   -> (variable de posición)
+        n   -> (numero de variables de estado)
+        q0  -> (variable de s)
         dq0 -> (valor inicial de la derivada)
+        F   ->
         d   -> (granularidad del parámetro temporal)
     """  
     #q = [0.0]*(n+1)
@@ -73,10 +75,53 @@ def orb(n, q0, dq0, F, args=None, d=0.001):   # Plantilla
 
 
 
+#Areas
+
+def area_aux(seq_q0,seq_dq0,d):
+
+    fig, ax = plt.subplots(figsize=(12,5))
+    horiz = 0.251
+    ax = fig.add_subplot(1,1, 1)
     
-        
-# Parte de areas, repasar
-#Ejemplo de diagrama de fases (q, p) para un tiempo determinado
+    print(seq_dq0)
+    q2 = np.array([])
+    p2 = np.array([])
+    for i in range(len(seq_q0)):
+        for j in range(len(seq_dq0)):
+            q0 = seq_q0[i]
+            dq0 = seq_dq0[j]
+            n = int(horiz/d)
+            q = orb(n,q0=q0,dq0=dq0,F=F,d=d)
+            dq = deriv(q,dq0=dq0,d=d)
+            p = dq/2
+            q2 = np.append(q2,q[-1])
+            p2 = np.append(p2,p[-1])
+            plt.xlim(-2.2, 2.2)
+            plt.ylim(-1.2, 1.2)
+            plt.rcParams["legend.markerscale"] = 6
+            ax.set_xlabel("q(t)", fontsize=12)
+            ax.set_ylabel("p(t)", fontsize=12)
+            plt.plot(q[-1], p[-1], marker="o", markersize= 10, markeredgecolor="red",markerfacecolor="red")
+    plt.show()
+    
+    X = np.array([q2,p2]).T
+    hull = ConvexHull(X)
+    convex_hull_plot_2d(hull)
+    
+    
+    return(hull.volume)
+
+
+
+def calculate_area(d):
+    lower_area = area_aux(np.linspace(0., 1., num=20), [0], d)
+    upper_area = area_aux([1], np.linspace(0., 2, num=20), d)
+    polygonal_area = area_aux(np.linspace(0.,1., num=20), np.linspace(0., 2, num=20), d)
+    
+    return [lower_area, upper_area, polygonal_area]
+         
+
+
 
 
 
