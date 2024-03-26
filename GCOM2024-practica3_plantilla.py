@@ -110,8 +110,8 @@ plt.show()
 #Ejemplo de diagrama de fases (q, p) para un tiempo determinado
 horiz = 0.251
 ax = fig.add_subplot(1,1, 1)
-seq_q0 = np.linspace(0.,1.,num=20)
-seq_dq0 = np.linspace(0.,2,num=20)
+seq_q0 = np.linspace(0., 1., num=20)
+seq_dq0 = np.linspace(0., 2, num=20)
 q2 = np.array([])
 p2 = np.array([])
 for i in range(len(seq_q0)):
