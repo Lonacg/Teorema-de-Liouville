@@ -210,7 +210,7 @@ def calculate_area(d, t= 1/3, show_it= True):
 ################################################################# 
 
 
-def animate(t):
+def animate2(t):
     horiz = t
     fig, ax = plt.subplots()
     #ax = fig.add_subplot(1,1, 1)
@@ -235,16 +235,63 @@ def animate(t):
             ax.set_xlabel("q(t)", fontsize=12)
             ax.set_ylabel("p(t)", fontsize=12)
             ax.plot(q[-1], p[-1], marker="o", markersize= 10, markeredgecolor="blue",markerfacecolor="blue")
+    return ax,
+
+
+
+def animate(t):
+    horiz = t
+    fig, ax = plt.subplots()
+    #ax = fig.add_subplot(1,1, 1)
+    seq_q0 = np.linspace(0.,1.,num=20)
+    seq_dq0 = np.linspace(0.,2,num=20)
+    q2 = np.array([])
+    p2 = np.array([])
+    for i in range(len(seq_q0)):
+        for j in range(len(seq_dq0)):
+            q0 = seq_q0[i]
+            dq0 = seq_dq0[j]
+            d = 10**(-3)
+            n = int(horiz/d)
+            q = orb(n,q0=q0,dq0=dq0,F=F,d=d)
+            dq = deriv(q,dq0=dq0,d=d)
+            p = dq/2
+            q2 = np.append(q2,q[-1])
+            p2 = np.append(p2,p[-1])
+            plt.xlim(-2.2, 2.2)
+            plt.ylim(-1.2, 1.2)
+            plt.rcParams["legend.markerscale"] = 6
+
+            ax.plot(q[-1], p[-1], marker="o", markersize= 10, markeredgecolor="blue",markerfacecolor="blue")
+
     return ax
 
-from matplotlib import animation
+
+
 
 def init():
     return animate(.1)
 
 
 
+def make_gift():
+    fig, ax = plt.subplots()
 
+    ax.set_xlabel("q(t)", fontsize=12)
+    ax.set_ylabel("p(t)", fontsize=12)
+
+    ax.set_xlim(-2, 2)
+    ax.set_ylim(-1, 1)
+
+    #global a
+    #points, = ax.plot([], [], 'ro')    
+
+    anim = FuncAnimation(fig, animate, np.arange(0.1,5.1,0.1), init_func=init, interval=60)    
+    
+    
+    anim.save("GIFT.gif", fps = 10) 
+    
+    plt.show()
 
 
 
@@ -290,10 +337,14 @@ def main():
     Realiza una animación GIF del diagrama de fases Dt para t ∈ (0, 5).
     '''
     
+    '''
+    codigo antiguo
     fig = plt.figure(figsize=(6,6))
-    ani = animation.FuncAnimation(fig, animate, np.arange(0.1, 5.1, 0.1), init_func= init, interval=60)
+    ani = FuncAnimation(fig, animate, np.arange(0.1, 5.1, 0.1), init_func= init, interval=60)
     ani.save("GIFT.gif", writer='pillow', fps = 10) 
-    plt.show()
+    plt.show()    
+    '''
+    make_gift()
     
 
 
