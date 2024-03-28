@@ -13,9 +13,9 @@ from matplotlib.animation import FuncAnimation
 #os.getcwd()
 
 
-#################################################################    
+############################################################################    
 #  Funciones auxiliares de la plantilla
-################################################################# 
+############################################################################ 
 
 def orb(n, q0, dq0, F, args=None, d=0.001):   
     """
@@ -71,9 +71,9 @@ def F(q):
 
 
 
-#################################################################    
+############################################################################    
 #  APARTADO I)
-################################################################# 
+############################################################################ 
 
 def simplectica(q0, dq0, F, col= 0, d= 10**(-4), n = int(16/(10**(-4))), marker='-'):
     """
@@ -94,7 +94,6 @@ def simplectica(q0, dq0, F, col= 0, d= 10**(-4), n = int(16/(10**(-4))), marker=
     plt.plot(q, p, marker,c= plt.get_cmap("winter")(col))
 
 
-#global fig 
 def phase_diagram(d, Horiz, n_orbit, show_it= False):
     """
     Obtiene las condiciones iniciales y dibuja el diagrama de fases llamando a simplectica()
@@ -103,8 +102,7 @@ def phase_diagram(d, Horiz, n_orbit, show_it= False):
         d       -> float (granularidad del parámetro temporal)
         Horiz   -> float
         n_orbit -> int
-    """ 
-           
+    """   
     fig = plt.figure(figsize=(8,5))
     fig.subplots_adjust(hspace= 0.4, wspace= 0.2)
     ax = fig.add_subplot(1, 1, 1)
@@ -123,17 +121,15 @@ def phase_diagram(d, Horiz, n_orbit, show_it= False):
     if show_it == True:
         ax.set_xlabel("q(t)", fontsize= 12)
         ax.set_ylabel("p(t)", fontsize= 12)
-        #fig.savefig('Simplectic.png', dpi=250)
         plt.title(f"Digrama de fases para {n_orbit} orbitas")
 
         plt.show()
     
 
 
-
-#################################################################    
+############################################################################    
 #  APARTADO II)
-################################################################# 
+############################################################################ 
 
 def area_aux(t, seq_q0, seq_dq0, d, title, show_it= True): # Plantilla
     """
@@ -199,7 +195,7 @@ def calculate_area(d, t= 1/3, show_it= True):
 
     """      
     polygonal_area = area_aux(t, np.linspace(0., 1., num=20), np.linspace(0., 2., num=20), d, "Polygonal Area", show_it)
-    lower_area = area_aux(t, np.linspace(0., 1., num=40), [0], d, "Lower Area", show_it)
+    lower_area = area_aux(t, np.linspace(0., 1., num=20), [0], d, "Lower Area", show_it)
     right_area = area_aux(t, [1], np.linspace(0., 2., num=20), d, "Right Area", show_it)
 
     area = polygonal_area - (lower_area + right_area)
@@ -207,26 +203,25 @@ def calculate_area(d, t= 1/3, show_it= True):
     return area
          
 
-#################################################################    
+
+############################################################################    
 #  APARTADO III)
-################################################################# 
+############################################################################ 
 
 fig = plt.figure(figsize=(6,6))
 
 def animate(t):
     """
-    Funcion auxiliar para la creacion del gif, calcula los puntos concretos para cada valor de t.
+    Funcion auxiliar para la creacion del gif, calcula los puntos concretos
+    para cada valor de t.
 
     Arguments:
         t -> float (parametro temporal)
-    """  
-
+    """ 
 
     horiz = t
     
-    #fig, ax = plt.subplots()    #salen imagenes consola, no gif
-
-    #ax = fig.add_subplot(1, 1, 1)
+    ax = fig.add_subplot(1, 1, 1)
     seq_q0 = np.linspace(0.,1.,num=20)
     seq_dq0 = np.linspace(0.,2,num=20)
     q2 = np.array([])
@@ -243,60 +238,34 @@ def animate(t):
 
             q2 = np.append(q2, q[-1])
             p2 = np.append(p2, p[-1])
-            #plt.xlim(-2.2, 2.2)  # Quitados sale la ultima bien # Puestos se fijan los ejes
-            #plt.ylim(-1.2, 1.2)
-            #plt.rcParams["legend.markerscale"] = 6
-            #ax.set_xlabel("q(t)", fontsize=12) 
-            #ax.set_ylabel("p(t)", fontsize=12)
-            
-            ax.plot(q[-1], p[-1], marker="o", markersize= 5, markeredgecolor="blue",markerfacecolor="blue")
+            plt.xlim(-2.2, 2.2)  
+            plt.ylim(-1.2, 1.2)
+            plt.rcParams["legend.markerscale"] = 6
+            ax.set_xlabel("q(t)", fontsize=12) 
+            ax.set_ylabel("p(t)", fontsize=12)
+            ax.set_title("GIF diagrama de fases para t entre 0 y 5")
+            ax.plot(q[-1], p[-1], marker="o", markersize= 5, markeredgecolor="red", markerfacecolor="blue")
 
     return ax
 
 
-def init():
-    """
-    Funcion para inicializar la creacion del GIF
-    """  
-    return animate(.1)
-
-def make_gif(d, Horiz, n_orbit):
-    """
-    Crea el gif utilizando el paquete Animation de la libreria matplotlib y lo guarda en la 
-    carpeta donde se encuentre el archivo .py
-    """  
-    global ax, q2, p2
-    fig, ax = plt.subplots()  #Si
-    
-    #phase_diagram(d, Horiz, n_orbit)
-
-    
-    #ax = fig.add_subplot(1, 1, 1)  # No
-
-    #fig.subplots_adjust()
-
-    ax.set_xlabel("q(t)", fontsize=12)
-    ax.set_ylabel("p(t)", fontsize=12)
-
-    ax.set_xlim(-2.2, 2.2)
-    ax.set_ylim(-1.2, 1.2)
+# Creacion del gif usando el paquete Animation de Matplotlib
+anim = FuncAnimation(fig, animate, np.arange(0.1, 5.1, 0.1), interval= 60)
+anim.save("GIF.gif", fps = 10) 
 
 
 
-    anim = FuncAnimation(fig, animate, np.arange(0.1, 5.1, 0.8), interval= 60)
-    anim.save("GIF.gif", fps = 10) 
-
-    plt.show()
-
-
+############################################################################    
+#  RESULTADOS
+############################################################################
 
 def main():
 
     print('APARTADO I)')
     '''
-    Representa gráficamente el espacio fásico D(0,∞) de las órbitas finales del 
-    sistema S con las condiciones iniciales D0. Considera al menos 20 órbitas 
-    finales diferentes.
+    Representa graficamente el espacio fasico D(0, inf) de las orbitas 
+    finales del sistema S con las condiciones iniciales D0. Considera al 
+    menos 20 orbitas finales diferentes.
     '''
     n_orbit = 20
 
@@ -305,13 +274,12 @@ def main():
     phase_diagram(d, Horiz, n_orbit, True)
 
 
-
     print('APARTADO II)')
     '''
-    - Obtén el valor del área de D para t = 1/3 y una estimación del su intervalo 
-    de error, presentando los valores de forma científicamente formal (puedes 
-    estimar el error a partir de la sensibilidad al parámetro δ). 
-    - ¿Se cumple el teorema de Liouville entre D0 y Dt? Razona la respuesta.
+    - Obten el valor del area de D para t = 1/3 y una estimacion de su
+    intervalo de error, presentando los valores de forma cientificamente
+    formal.
+    - Razona si se cumple el teorema de Liouville entre D0 y Dt.
     '''
     d1 = 10**(-3)
     d2 = 10**(-4)
@@ -327,31 +295,13 @@ def main():
     print(f'\nEstimacion del error: {abs(a1-a2)}')
 
     
-    print('APARTADO III)')
     '''
+    APARTADO III)
     Realiza una animación GIF del diagrama de fases Dt para t ∈ (0, 5).
     '''
-    
-    '''
-    codigo antiguo
-    fig = plt.figure(figsize=(6,6))
-    ani = FuncAnimation(fig, animate, np.arange(0.1, 5.1, 0.1), init_func= init, interval=60)
-    ani.save("GIFT.gif", writer='pillow', fps = 10) 
-    plt.show()    
-    '''
-    #fig = plt.figure(figsize= (6,6))
-    make_gif(d, Horiz, n_orbit)
-    
+    # Se hace fuera de la funcion para generar el gift correctamente
 
+    
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
