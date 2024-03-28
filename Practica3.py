@@ -86,7 +86,7 @@ def simplectica(q0, dq0, F, col= 0, d= 10**(-4), n = int(16/(10**(-4))), marker=
         col    -> int
         d      -> float (granularidad del parámetro temporal)
         n      -> int (numero de variables de estado)
-        marker -> string
+        marker -> string (representacion de los puntos en la grafica)
     """   
     q = orb(n, q0= q0, dq0= dq0, F= F, d= d)
     dq = deriv(q, dq0= dq0, d= d)
@@ -94,7 +94,8 @@ def simplectica(q0, dq0, F, col= 0, d= 10**(-4), n = int(16/(10**(-4))), marker=
     plt.plot(q, p, marker,c= plt.get_cmap("winter")(col))
 
 
-def phase_diagram(d, Horiz, n_orbit):
+#global fig 
+def phase_diagram(d, Horiz, n_orbit, show_it= False):
     """
     Obtiene las condiciones iniciales y dibuja el diagrama de fases llamando a simplectica()
 
@@ -102,7 +103,8 @@ def phase_diagram(d, Horiz, n_orbit):
         d       -> float (granularidad del parámetro temporal)
         Horiz   -> float
         n_orbit -> int
-    """         
+    """ 
+           
     fig = plt.figure(figsize=(8,5))
     fig.subplots_adjust(hspace= 0.4, wspace= 0.2)
     ax = fig.add_subplot(1, 1, 1)
@@ -118,12 +120,13 @@ def phase_diagram(d, Horiz, n_orbit):
 
             simplectica(q0= q0, dq0= dq0, F= F, col= col, marker= 'ro', d= 10**(-3), n = int(Horiz/d))
     
-    ax.set_xlabel("q(t)", fontsize=12)
-    ax.set_ylabel("p(t)", fontsize=12)
-    #fig.savefig('Simplectic.png', dpi=250)
-    plt.title(f"Digrama de fases para {n_orbit} orbitas")
+    if show_it == True:
+        ax.set_xlabel("q(t)", fontsize= 12)
+        ax.set_ylabel("p(t)", fontsize= 12)
+        #fig.savefig('Simplectic.png', dpi=250)
+        plt.title(f"Digrama de fases para {n_orbit} orbitas")
 
-    plt.show()
+        plt.show()
     
 
 
@@ -143,10 +146,10 @@ def area_aux(t, seq_q0, seq_dq0, d, title, show_it= True): # Plantilla
         seq_dq0 -> float (variable de s)
         d       -> float (granularidad del parámetro temporal)
         title   -> string (titulo de la grafica)
-
+        show_it -> bool (si queremos que lo represente o no)
     """ 
     if show_it: 
-        fig, ax = plt.subplots(figsize=(12,5))
+        fig, ax = plt.subplots(figsize=(8,5))
     
     horiz = t
     
@@ -164,13 +167,13 @@ def area_aux(t, seq_q0, seq_dq0, d, title, show_it= True): # Plantilla
             q2 = np.append(q2,q[-1])
             p2 = np.append(p2,p[-1])
             if show_it:
-                plt.xlim(-2.2, 2.2)
-                plt.ylim(-1.2, 1.2)
+                plt.xlim(-0.2, 1.8)
+                plt.ylim(-0.2, 1.3)
                 plt.rcParams["legend.markerscale"] = 6
                 ax.set_xlabel("q(t)", fontsize=12)
                 ax.set_ylabel("p(t)", fontsize=12)
                 plt.title(title)
-                plt.plot(q[-1], p[-1], marker="o", markersize= 10, markeredgecolor="red",markerfacecolor="red")
+                plt.plot(q[-1], p[-1], marker="o", markersize= 7, markeredgecolor="red",markerfacecolor="red")
     
     # Componente convexa
     X = np.array([q2,p2]).T
@@ -191,6 +194,8 @@ def calculate_area(d, t= 1/3, show_it= True):
 
     Arguments:
         d -> float (granularidad del parámetro temporal)
+        t -> float (parametro temporal)
+        show_it -> bool (si queremos que lo represente o no)
 
     """      
     polygonal_area = area_aux(t, np.linspace(0., 1., num=20), np.linspace(0., 2., num=20), d, "Polygonal Area", show_it)
@@ -202,47 +207,26 @@ def calculate_area(d, t= 1/3, show_it= True):
     return area
          
 
-
-
-
 #################################################################    
 #  APARTADO III)
 ################################################################# 
 
-
-def animate2(t):
-    horiz = t
-    fig, ax = plt.subplots()
-    #ax = fig.add_subplot(1,1, 1)
-    seq_q0 = np.linspace(0.,1.,num=20)
-    seq_dq0 = np.linspace(0.,2,num=20)
-    q2 = np.array([])
-    p2 = np.array([])
-    for i in range(len(seq_q0)):
-        for j in range(len(seq_dq0)):
-            q0 = seq_q0[i]
-            dq0 = seq_dq0[j]
-            d = 10**(-3)
-            n = int(horiz/d)
-            q = orb(n,q0=q0,dq0=dq0,F=F,d=d)
-            dq = deriv(q,dq0=dq0,d=d)
-            p = dq/2
-            q2 = np.append(q2,q[-1])
-            p2 = np.append(p2,p[-1])
-            plt.xlim(-2.2, 2.2)
-            plt.ylim(-1.2, 1.2)
-            plt.rcParams["legend.markerscale"] = 6
-            ax.set_xlabel("q(t)", fontsize=12)
-            ax.set_ylabel("p(t)", fontsize=12)
-            ax.plot(q[-1], p[-1], marker="o", markersize= 10, markeredgecolor="blue",markerfacecolor="blue")
-    return ax,
-
-
+fig = plt.figure(figsize=(6,6))
 
 def animate(t):
+    """
+    Funcion auxiliar para la creacion del gif, calcula los puntos concretos para cada valor de t.
+
+    Arguments:
+        t -> float (parametro temporal)
+    """  
+
+
     horiz = t
-    fig, ax = plt.subplots()
-    #ax = fig.add_subplot(1,1, 1)
+    
+    #fig, ax = plt.subplots()    #salen imagenes consola, no gif
+
+    #ax = fig.add_subplot(1, 1, 1)
     seq_q0 = np.linspace(0.,1.,num=20)
     seq_dq0 = np.linspace(0.,2,num=20)
     q2 = np.array([])
@@ -252,45 +236,56 @@ def animate(t):
             q0 = seq_q0[i]
             dq0 = seq_dq0[j]
             d = 10**(-3)
-            n = int(horiz/d)
-            q = orb(n,q0=q0,dq0=dq0,F=F,d=d)
-            dq = deriv(q,dq0=dq0,d=d)
-            p = dq/2
-            q2 = np.append(q2,q[-1])
-            p2 = np.append(p2,p[-1])
-            plt.xlim(-2.2, 2.2)
-            plt.ylim(-1.2, 1.2)
-            plt.rcParams["legend.markerscale"] = 6
+            n = int(horiz / d)
+            q = orb(n, q0= q0, dq0= dq0, F= F, d= d)
+            dq = deriv(q, dq0= dq0, d= d)
+            p = dq / 2
 
-            ax.plot(q[-1], p[-1], marker="o", markersize= 10, markeredgecolor="blue",markerfacecolor="blue")
+            q2 = np.append(q2, q[-1])
+            p2 = np.append(p2, p[-1])
+            #plt.xlim(-2.2, 2.2)  # Quitados sale la ultima bien # Puestos se fijan los ejes
+            #plt.ylim(-1.2, 1.2)
+            #plt.rcParams["legend.markerscale"] = 6
+            #ax.set_xlabel("q(t)", fontsize=12) 
+            #ax.set_ylabel("p(t)", fontsize=12)
+            
+            ax.plot(q[-1], p[-1], marker="o", markersize= 5, markeredgecolor="blue",markerfacecolor="blue")
 
     return ax
 
 
-
-
 def init():
+    """
+    Funcion para inicializar la creacion del GIF
+    """  
     return animate(.1)
 
+def make_gif(d, Horiz, n_orbit):
+    """
+    Crea el gif utilizando el paquete Animation de la libreria matplotlib y lo guarda en la 
+    carpeta donde se encuentre el archivo .py
+    """  
+    global ax, q2, p2
+    fig, ax = plt.subplots()  #Si
+    
+    #phase_diagram(d, Horiz, n_orbit)
 
+    
+    #ax = fig.add_subplot(1, 1, 1)  # No
 
-def make_gift():
-    fig, ax = plt.subplots()
+    #fig.subplots_adjust()
 
     ax.set_xlabel("q(t)", fontsize=12)
     ax.set_ylabel("p(t)", fontsize=12)
 
-    ax.set_xlim(-2, 2)
-    ax.set_ylim(-1, 1)
+    ax.set_xlim(-2.2, 2.2)
+    ax.set_ylim(-1.2, 1.2)
 
-    #global a
-    #points, = ax.plot([], [], 'ro')    
 
-    anim = FuncAnimation(fig, animate, np.arange(0.1,5.1,0.1), init_func=init, interval=60)    
-    
-    
-    anim.save("GIFT.gif", fps = 10) 
-    
+
+    anim = FuncAnimation(fig, animate, np.arange(0.1, 5.1, 0.8), interval= 60)
+    anim.save("GIF.gif", fps = 10) 
+
     plt.show()
 
 
@@ -307,7 +302,7 @@ def main():
 
     d = 10**(-3)
     Horiz = 12
-    #phase_diagram(d, Horiz, n_orbit)
+    phase_diagram(d, Horiz, n_orbit, True)
 
 
 
@@ -321,7 +316,7 @@ def main():
     d1 = 10**(-3)
     d2 = 10**(-4)
     t = 1/3
-    '''
+    
     a1 = calculate_area(d1, t)
     a2 = calculate_area(d2, t, show_it= False)
 
@@ -331,7 +326,7 @@ def main():
 
     print(f'\nEstimacion del error: {abs(a1-a2)}')
 
-    '''
+    
     print('APARTADO III)')
     '''
     Realiza una animación GIF del diagrama de fases Dt para t ∈ (0, 5).
@@ -344,7 +339,8 @@ def main():
     ani.save("GIFT.gif", writer='pillow', fps = 10) 
     plt.show()    
     '''
-    make_gift()
+    #fig = plt.figure(figsize= (6,6))
+    make_gif(d, Horiz, n_orbit)
     
 
 
