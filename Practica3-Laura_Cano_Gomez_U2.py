@@ -77,7 +77,7 @@ def F(q):
 
 def simplectica(q0, dq0, F, col= 0, d= 10**(-4), n = int(16/(10**(-4))), marker='-'):
     """
-    Pinta el diagrama de fases
+    Representa el diagrama de fases
 
     Arguments:
         q0     -> float (variable de s)
@@ -133,7 +133,7 @@ def phase_diagram(d, Horiz, n_orbit, show_it= False):
 
 def area_aux(t, seq_q0, seq_dq0, d, title, show_it= True): # Plantilla
     """
-    Calcula el area de la componente conexa
+    Calcula el area en la region determinada de entrada
 
     Returns a float object (subarea)
 
@@ -299,7 +299,7 @@ def main():
     APARTADO III)
     Realiza una animación GIF del diagrama de fases Dt para t ∈ (0, 5).
     '''
-    # Se hace fuera de la funcion para generar el gift correctamente
+    # Se hace fuera de la funcion para generar el gif correctamente
 
     
 
